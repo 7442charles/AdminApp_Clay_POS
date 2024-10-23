@@ -21,7 +21,6 @@ class ClayMartAdminApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFFF0040),
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
           iconTheme: IconThemeData(color: Colors.white),
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -74,7 +73,15 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ClayMart Admin'),
+        title: const Center( // Center the title
+          child: Text(
+            'ClayMart Admin',
+            style: TextStyle(
+              fontSize: 24, // Increased font size
+              fontWeight: FontWeight.bold, 
+            ),
+          ),
+        ),
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -83,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem (
+          BottomNavigationBarItem(
             icon: Icon(Icons.qr_code_scanner),
             label: 'Barcode',
           ),
