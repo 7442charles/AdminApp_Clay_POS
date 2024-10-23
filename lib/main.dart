@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'barcode_scanner_logic.dart'; // Import the logic file
+import 'package:myapp/barcode_scanner_screen.dart';
+import 'package:myapp/homepage.dart'; // Ensure this file contains the HomePage widget
+import 'package:myapp/stockpage.dart'; // Ensure this file contains the StockPage widget
+import 'package:myapp/downloads_page.dart'; // Import the Downloads page
 
 void main() {
   runApp(const ClayMartAdminApp());
@@ -11,99 +14,90 @@ class ClayMartAdminApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'ClayMart Admin',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFFFF0040),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFFF0040),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Color(0xFFFF0040),
+          unselectedItemColor: Colors.black54,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFFFF0040),
+          ),
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+          titleLarge: TextStyle(color: Colors.white),
+        ),
       ),
-      home: const BarcodeScannerScreen(),
+      home: const MainScreen(),
     );
   }
 }
 
-class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  _BarcodeScannerScreenState createState() => _BarcodeScannerScreenState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
-  BarcodeScannerLogic logic = BarcodeScannerLogic();
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _screens = <Widget>[
+    const HomePage(), // Home tab content
+    const BarcodeScannerScreen(), // Barcode scanner tab content
+    StockPage(), // Stock tab content
+    const DownloadsPage(), // Downloads tab content
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      print('Selected index: $_selectedIndex'); // Debugging line
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("ClayMart Admin"),
+        title: const Text('ClayMart Admin'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Show camera preview only after barcode is scanned
-            if (logic.isScanned)
-              Container(
-                height: 200,
-                width: double.infinity,
-                color: Colors.grey[300], // Placeholder for camera preview
-                child: const Center(
-                  child: Text("Camera Preview Here"),
-                ),
-              ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await logic.scanBarcode(context); // Open camera and scan barcode
-                setState(() {}); // Update UI after barcode is scanned
-              },
-              child: const Text("Scan New Item"),
-            ),
-            const SizedBox(height: 10),
-            if (logic.barcodeValue.isNotEmpty)
-              Text(
-                "Scanned Barcode: ${logic.barcodeValue}",
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            const SizedBox(height: 20),
-
-            // Input fields for name, price, and quantity
-            TextField(
-              controller: logic.nameController,
-              decoration: const InputDecoration(
-                labelText: "Name",
-                border: OutlineInputBorder(),
-              ),
-              enabled: logic.isScanned, // Disable if item is not scanned
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: logic.priceController,
-              decoration: const InputDecoration(
-                labelText: "Price",
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              enabled: logic.isScanned, // Disable if item is not scanned
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: logic.quantityController,
-              decoration: const InputDecoration(
-                labelText: "Quantity",
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              enabled: logic.isScanned, // Disable if item is not scanned
-            ),
-            const SizedBox(height: 20),
-
-            // Submit button
-            ElevatedButton(
-              onPressed: logic.isScanned ? () => logic.submitData() : null,
-              child: const Text("Submit"),
-            ),
-          ],
-        ),
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem (
+            icon: Icon(Icons.qr_code_scanner),
+            label: 'Barcode',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: 'Stock',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.download),
+            label: 'Downloads',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }

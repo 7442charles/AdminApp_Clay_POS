@@ -4,9 +4,10 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 class BarcodeScannerLogic {
   String barcodeValue = "";
   TextEditingController nameController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
+  TextEditingController buyingPriceController = TextEditingController(); // New controller for buying price
+  TextEditingController sellingPriceController = TextEditingController(); // New controller for selling price
   TextEditingController quantityController = TextEditingController();
-  bool isScanned = false; // State to track if barcode is scanned
+  bool isScanned = false; // Track if the barcode has been scanned
 
   // Function to scan barcode using the camera
   Future<void> scanBarcode(BuildContext context) async {
@@ -17,13 +18,13 @@ class BarcodeScannerLogic {
         barcodeValue = result.rawContent; // Save the scanned barcode value
         isScanned = true; // Set the state to indicate that barcode is scanned
 
-        // Show scanned value to the user
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Barcode Scanned: $barcodeValue")),
         );
       }
     } catch (e) {
-      // Handle any error that may occur
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error scanning barcode: $e")),
       );
@@ -31,12 +32,13 @@ class BarcodeScannerLogic {
   }
 
   void submitData() {
-    // Logic to push data to Google Sheets goes here
+    // Logic to submit data goes here
     print("Barcode: $barcodeValue");
     print("Name: ${nameController.text}");
-    print("Price: ${priceController.text}");
+    print("Buying Price: ${buyingPriceController.text}"); // Print buying price
+    print("Selling Price: ${sellingPriceController.text}"); // Print selling price
     print("Quantity: ${quantityController.text}");
-
-    // Add logic to push to Google Sheets or any backend service
+    
+    // Add logic to handle the data, e.g., send to a server or store locally
   }
 }
